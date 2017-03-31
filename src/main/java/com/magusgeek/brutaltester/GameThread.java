@@ -1,7 +1,13 @@
 package com.magusgeek.brutaltester;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.CloseAction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,14 +71,36 @@ public class GameThread extends Thread {
                 }
                 
                 String line = refereeScanner.nextLine();
-                boolean input = false;
-                int target = 0;
                 
                 while (!line.startsWith("###End")) {
                     if (line.startsWith("###Input")) {
                         // Read all lines from the referee until next command and give it to the targeted process
+                        OutputStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOutputStream();
+                        
+                        line = refereeScanner.nextLine();
+                        while (!line.startsWith("###")) {
+                            outputStream.write(line.getBytes(StandardCharsets.UTF_8));
+                            outputStream.write('\n');
+                        }
+                        
+                        outputStream.flush();
+                        clearErrorStream(referee);
                     } else if (line.startsWith("###Output")) {
-                        // Read x liens from the targeted process and give to the referee
+                        // Read x lines from the targeted process and give to the referee
+                        int target = Character.getNumericValue(line.charAt(10));
+                        int x =  Character.getNumericValue(line.charAt(12));
+                        
+                        Process player = players.get(target);
+                        OutputStream outputStream = referee.getOutputStream();
+                        Scanner scanner = scanners.get(target);
+                        
+                        for (int i = 0; i < x; ++i) {
+                            outputStream.write(scanner.nextLine().getBytes(StandardCharsets.UTF_8));
+                            outputStream.write('\n');
+                        }
+                    
+                        outputStream.flush();
+                        clearErrorStream(player);
                     }
                 }
                 
@@ -84,9 +112,10 @@ public class GameThread extends Thread {
                     }
                 }
                 
-                destroyAll();
+                
             } catch (Exception exception) {
                 LOG.error("Exception in GameThread " + id, exception);
+            } finally {
                 destroyAll();
             }
         }
@@ -94,18 +123,27 @@ public class GameThread extends Thread {
     
     private void destroyAll() {
         if (scanners != null) {
-            scanners.forEach(s -> s.close());
+            scanners.forEach(Scanner::close);
+        }
         
         if (refereeScanner != null) {
             refereeScanner.close();
         }
         
         if (players != null) {
-            players.forEach(p -> p.destroy());
+            players.forEach(Process::destroy);
         }
         
         if (referee != null) {
             referee.destroy();
+        }
+    }
+        
+    private void clearErrorStream(Process process) throws IOException {
+        InputStream errorStream = process.getErrorStream();
+        
+        while(errorStream.available() != 0) {
+            errorStream.read();
         }
     }
 
