@@ -18,8 +18,10 @@ public class PlayerStats {
     }
     
     public void print() {
-        for (int i = 0; i < 4; ++i) {
-            System.out.println(" Position " + (i + 1) + " : " + stats[i] + " (" + (stats[i]*100 / total) + "%)");
+        if (total > 0) {
+            for (int i = 0; i < 4; ++i) {
+                System.out.println(" Position " + (i + 1) + " : " + stats[i] + " (" + (stats[i]*100 / total) + "%)");
+            }
         }
     }
 }

@@ -26,16 +26,16 @@ public class Main {
                    .addOption("v", false, "Verbose mode. Spam incoming.")
                    .addOption("n", true, "Number of games to play. Default 1.")
                    .addOption("t", true, "Number of thread to spawn for the games. Default 1.")
-                   .addOption("r", true, "Referee command line")
-                   .addOption("p1", true, "Player 1 command line")
-                   .addOption("p2", true, "Player 2 command line")
-                   .addOption("p3", true, "Player 3 command line")
-                   .addOption("p4", true, "Player 4 command line");
+                   .addOption("r", true, "Required. Referee command line.")
+                   .addOption("p1", true, "Required. Player 1 command line.")
+                   .addOption("p2", true, "Required. Player 2 command line.")
+                   .addOption("p3", true, "Player 3 command line.")
+                   .addOption("p4", true, "Player 4 command line.");
 
             CommandLine cmd = new DefaultParser().parse(options, args);
 
             // Need help ?
-            if (cmd.hasOption("h")) {
+            if (cmd.hasOption("h") || !cmd.hasOption("r") || !cmd.hasOption("p1") || !cmd.hasOption("p2")) {
                 new HelpFormatter().printHelp("-r <referee command line> -p1 <player1 command line> -p2 <player2 command line> -p3 <player3 command line> -p4 <player4 command line> [-v -n <games> -t <thread>]", options);
                 System.exit(0);
             }

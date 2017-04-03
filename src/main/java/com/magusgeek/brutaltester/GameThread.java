@@ -1,13 +1,9 @@
 package com.magusgeek.brutaltester;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.CloseAction;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,23 +14,30 @@ public class GameThread extends Thread {
     private static final Log LOG = LogFactory.getLog(GameThread.class);
     
     private int id;
-    private String refereeCmd;
-    private List<String> playersCmd;
     private Mutable<Integer> count;
     private PlayerStats[] playerStats;
     private int n;
-    private List<Process> players;
-    private Process referee;
-    private List<Scanner> scanners;
-    private Scanner refereeScanner;
+    private List<BrutalProcess> players;
+    private BrutalProcess referee;
+    
+    private ProcessBuilder refereeBuilder;
+    private List<ProcessBuilder> playerBuilders;
 
     public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats[] playerStats, int n) {
         this.id = id;
-        this.refereeCmd = refereeCmd;
-        this.playersCmd = playersCmd;
         this.count = count;
         this.playerStats = playerStats;
         this.n = n;
+        
+        refereeBuilder = new ProcessBuilder(refereeCmd.split(" "));
+        playerBuilders = new ArrayList<>();
+        for (String cmd : playersCmd) {
+            playerBuilders.add(new ProcessBuilder(cmd.split(" ")));
+        }
+    }
+    
+    private void log(String message) {
+        System.out.println(message);
     }
     
     public void run() {
@@ -55,52 +58,48 @@ public class GameThread extends Thread {
             
             try {
                 // Spawn referee process
-                referee = new ProcessBuilder(refereeCmd.split(" ")).start();
+                referee = new BrutalProcess(refereeBuilder.start());
                 
                 // Spawn players process
                 players = new ArrayList<>();
-                for (String cmd : playersCmd) {
-                    players.add(new ProcessBuilder(cmd.split(" ")).start());
+                for (ProcessBuilder builder : playerBuilders) {
+                    players.add(new BrutalProcess(builder.start()));
                 }
                 
-                // Plug scanners
-                refereeScanner = new Scanner(referee.getInputStream());
-                scanners = new ArrayList<>();
-                for (Process process : players) {
-                    scanners.add(new Scanner(process.getInputStream()));
-                }
-                
-                String line = refereeScanner.nextLine();
-                
+                String line = referee.getIn().nextLine();
+                log("Referee: " + line);
+          
                 while (!line.startsWith("###End")) {
                     if (line.startsWith("###Input")) {
                         // Read all lines from the referee until next command and give it to the targeted process
-                        OutputStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOutputStream();
+                        PrintStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOut();
                         
-                        line = refereeScanner.nextLine();
+                        line = referee.getIn().nextLine();
                         while (!line.startsWith("###")) {
-                            outputStream.write(line.getBytes(StandardCharsets.UTF_8));
-                            outputStream.write('\n');
+                            log("Referee: " + line);
+                            
+                            outputStream.println(line.getBytes(StandardCharsets.UTF_8));
+                            line = referee.getIn().nextLine();
                         }
                         
                         outputStream.flush();
-                        clearErrorStream(referee);
+                        referee.clearErrorStream();
                     } else if (line.startsWith("###Output")) {
                         // Read x lines from the targeted process and give to the referee
                         int target = Character.getNumericValue(line.charAt(10));
                         int x =  Character.getNumericValue(line.charAt(12));
                         
-                        Process player = players.get(target);
-                        OutputStream outputStream = referee.getOutputStream();
-                        Scanner scanner = scanners.get(target);
+                        BrutalProcess player = players.get(target);
+                        player.clearErrorStream();
                         
                         for (int i = 0; i < x; ++i) {
-                            outputStream.write(scanner.nextLine().getBytes(StandardCharsets.UTF_8));
-                            outputStream.write('\n');
+                            String playerLine = player.getIn().nextLine();
+                            log("Player " + target + ": " + playerLine);
+                            referee.getOut().println(playerLine.getBytes(StandardCharsets.UTF_8));
                         }
                     
-                        outputStream.flush();
-                        clearErrorStream(player);
+                        referee.getOut().flush();
+                        player.clearErrorStream();
                     }
                 }
                 
@@ -112,7 +111,7 @@ public class GameThread extends Thread {
                     }
                 }
                 
-                
+                LOG.info("End of game " + game);
             } catch (Exception exception) {
                 LOG.error("Exception in GameThread " + id, exception);
             } finally {
@@ -122,28 +121,18 @@ public class GameThread extends Thread {
     }
     
     private void destroyAll() {
-        if (scanners != null) {
-            scanners.forEach(Scanner::close);
-        }
-        
-        if (refereeScanner != null) {
-            refereeScanner.close();
-        }
-        
-        if (players != null) {
-            players.forEach(Process::destroy);
-        }
-        
-        if (referee != null) {
-            referee.destroy();
-        }
-    }
-        
-    private void clearErrorStream(Process process) throws IOException {
-        InputStream errorStream = process.getErrorStream();
-        
-        while(errorStream.available() != 0) {
-            errorStream.read();
+        try {
+            if (players != null) {
+                for (BrutalProcess player: players) {
+                    player.destroy();
+                }
+            }
+            
+            if (referee != null) {
+                referee.destroy();
+            }
+        } catch (Exception exception) {
+            LOG.error("Unable to destroy all");
         }
     }
 
