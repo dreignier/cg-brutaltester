@@ -1,8 +1,6 @@
 package com.magusgeek.brutaltester;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Scanner;
 
 public class BrutalProcess {
@@ -10,18 +8,18 @@ public class BrutalProcess {
     private Process process;
     private PrintStream out;
     private Scanner in;
-    private InputStream error;
+    private BufferedReader error;
     
     public BrutalProcess(Process process) {
         this.process = process;
         out = new PrintStream(process.getOutputStream());
         in = new Scanner(process.getInputStream());
-        error = process.getErrorStream();
+        error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
     }
     
-    public void clearErrorStream() throws IOException {
-        while (error.available() != 0) {
-            error.read();
+    public void clearErrorStream(GameThread thread, String prefix) throws IOException {
+        while (error.ready()) {
+            thread.log(prefix + error.readLine());
         }
     }
     
@@ -44,23 +42,11 @@ public class BrutalProcess {
         return out;
     }
 
-    public void setOut(PrintStream out) {
-        this.out = out;
-    }
-
     public Scanner getIn() {
         return in;
     }
 
-    public void setIn(Scanner in) {
-        this.in = in;
-    }
-
-    public InputStream getError() {
+    public BufferedReader getError() {
         return error;
-    }
-
-    public void setError(InputStream error) {
-        this.error = error;
     }
 }

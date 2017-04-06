@@ -36,7 +36,7 @@ public class GameThread extends Thread {
         }
     }
     
-    private void log(String message) {
+    public void log(String message) {
         System.out.println(message);
     }
     
@@ -83,14 +83,14 @@ public class GameThread extends Thread {
                         }
                         
                         outputStream.flush();
-                        referee.clearErrorStream();
+                        referee.clearErrorStream(this, "Referee error: ");
                     } else if (line.startsWith("###Output")) {
                         // Read x lines from the targeted process and give to the referee
                         int target = Character.getNumericValue(line.charAt(10));
                         int x =  Character.getNumericValue(line.charAt(12));
                         
                         BrutalProcess player = players.get(target);
-                        player.clearErrorStream();
+                        player.clearErrorStream(this, "Player " + target + " error: ");
                         
                         for (int i = 0; i < x; ++i) {
                             String playerLine = player.getIn().nextLine();
@@ -99,7 +99,7 @@ public class GameThread extends Thread {
                         }
                     
                         referee.getOut().flush();
-                        player.clearErrorStream();
+                        player.clearErrorStream(this, "Player " + target + " error: ");
                     }
                 }
                 
