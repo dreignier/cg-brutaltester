@@ -1,5 +1,6 @@
 package com.magusgeek.brutaltester;
 
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,8 @@ public class Main {
                    .addOption("p1", true, "Required. Player 1 command line.")
                    .addOption("p2", true, "Required. Player 2 command line.")
                    .addOption("p3", true, "Player 3 command line.")
-                   .addOption("p4", true, "Player 4 command line.");
+                   .addOption("p4", true, "Player 4 command line.")
+                   .addOption("l", true, "A directory for games logs");
 
             CommandLine cmd = new DefaultParser().parse(options, args);
 
@@ -78,6 +80,15 @@ public class Main {
 
             }
             LOG.info("Number of threads to spawn: " + t);
+            
+            // Logs directory
+            Path logs = null;
+            if (cmd.hasOption("l")) {
+                logs = FileSystems.getDefault().getPath(cmd.getOptionValue("l"));
+                if (!Files.isDirectory(logs)) {
+                    throw new NotDirectoryException("Given path for the logs directory is not a directory: " + logs);
+                }
+            }
 
             // Prepare stats objects
             playerStats = new PlayerStats[playersCmd.size()];
@@ -89,7 +100,7 @@ public class Main {
             
             // Start the threads
             for (int i = 0; i < t; ++i) {
-                new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n).start();
+                new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs).start();
             }
         } catch (Exception exception) {
             LOG.fatal("cg-brutaltester failed to start", exception);
@@ -102,9 +113,9 @@ public class Main {
             finished += 1;
             
             if (finished >= t) {
-                System.out.println("*** End of games ***");
+                LOG.info("*** End of games ***");
                 for (int i = 0; i < playerStats.length; ++i) {
-                    System.out.println("*** Statistics for player " + (i + 1) + ":");
+                    LOG.info("*** Statistics for player " + (i + 1) + ":");
                     playerStats[i].print();
                 }
             }

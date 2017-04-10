@@ -1,6 +1,11 @@
 package com.magusgeek.brutaltester;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class PlayerStats {
+    private static final Log LOG = LogFactory.getLog(PlayerStats.class);
+    
     private int[] stats = new int[4];
     private int total;
     
@@ -20,7 +25,7 @@ public class PlayerStats {
     public void print() {
         if (total > 0) {
             for (int i = 0; i < 4; ++i) {
-                System.out.println(" Position " + (i + 1) + " : " + stats[i] + " (" + (stats[i]*100 / total) + "%)");
+                LOG.info(" Position " + (i + 1) + " : " + stats[i] + " (" + (stats[i]*100 / total) + "%)");
             }
         }
     }

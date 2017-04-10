@@ -1,7 +1,7 @@
 package com.magusgeek.brutaltester;
 
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,15 +19,19 @@ public class GameThread extends Thread {
     private int n;
     private List<BrutalProcess> players;
     private BrutalProcess referee;
+    private Path logs;
+    private PrintStream logsWriter;
     
     private ProcessBuilder refereeBuilder;
     private List<ProcessBuilder> playerBuilders;
+    private int game;
 
-    public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats[] playerStats, int n) {
+    public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats[] playerStats, int n, Path logs) {
         this.id = id;
         this.count = count;
         this.playerStats = playerStats;
         this.n = n;
+        this.logs = logs;
         
         refereeBuilder = new ProcessBuilder(refereeCmd.split(" "));
         playerBuilders = new ArrayList<>();
@@ -37,12 +41,18 @@ public class GameThread extends Thread {
     }
     
     public void log(String message) {
-        System.out.println(message);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[Game " + game + "] " + message);
+        }
+        
+        if (logsWriter != null) {
+            logsWriter.println(message);
+        }
     }
     
     public void run() {
         while (true) {
-            int game = 0;
+            game = 0;
             synchronized (count) {
                 if (count.get() < n) {
                     game = count.get() + 1;
@@ -57,6 +67,11 @@ public class GameThread extends Thread {
             }
             
             try {
+                if (this.logs != null) {
+                    // Open logs stream
+                    logsWriter = new PrintStream(this.logs + "/game" + game + ".log");
+                }
+                
                 // Spawn referee process
                 referee = new BrutalProcess(refereeBuilder.start());
                 
@@ -73,12 +88,13 @@ public class GameThread extends Thread {
                     if (line.startsWith("###Input")) {
                         // Read all lines from the referee until next command and give it to the targeted process
                         PrintStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOut();
+                        referee.clearErrorStream(this, "Referee error: ");
                         
                         line = referee.getIn().nextLine();
                         while (!line.startsWith("###")) {
                             log("Referee: " + line);
                             
-                            outputStream.println(line.getBytes(StandardCharsets.UTF_8));
+                            outputStream.println(line);
                             line = referee.getIn().nextLine();
                         }
                         
@@ -95,13 +111,20 @@ public class GameThread extends Thread {
                         for (int i = 0; i < x; ++i) {
                             String playerLine = player.getIn().nextLine();
                             log("Player " + target + ": " + playerLine);
-                            referee.getOut().println(playerLine.getBytes(StandardCharsets.UTF_8));
+                            referee.getOut().println(playerLine);
                         }
                     
                         referee.getOut().flush();
                         player.clearErrorStream(this, "Player " + target + " error: ");
+                        
+                        line = referee.getIn().nextLine();
+                    } else if (line.startsWith("###Error")) {
+                        int target = Character.getNumericValue(line.charAt(9));
+                        LOG.warn("Error for player " + target + " in game " + game + ": " + line.substring(9));
                     }
                 }
+                
+                log("Referee: " + line);
                 
                 // End of the game
                 String[] params = line.split(" ");
@@ -111,7 +134,7 @@ public class GameThread extends Thread {
                     }
                 }
                 
-                LOG.info("End of game " + game);
+                LOG.info("End of game " + game + ": " + line.substring(7));
             } catch (Exception exception) {
                 LOG.error("Exception in GameThread " + id, exception);
             } finally {
@@ -133,6 +156,11 @@ public class GameThread extends Thread {
             }
         } catch (Exception exception) {
             LOG.error("Unable to destroy all");
+        }
+        
+        if (logsWriter != null) {
+            logsWriter.close();
+            logsWriter = null;
         }
     }
 
