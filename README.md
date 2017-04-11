@@ -52,6 +52,10 @@ Display this help :
 
 Your referee must be runnable with a command line (or you won't be able to give it to cg-brutaltester) and you have to use the standard input and output streams. The referee can output on the error stream for debug purposes or real errors. It will be stored in the log file of the game. cg-brutaltester is a very naive arena, and the referee must tell it how to work.
 
+### Start of a game
+
+The first line received by the referee will be `###Start N`. Where `N` is the number of players for this game.
+
 ### Send intputs for a player
 
 If the referee want to give inputs for a player, it must first output `###Input X\n` where `X` is the index of the player (player 1 is `0`). Don't forge the `\n`. After this line, every output of the referee will be forwarded to the process of the player `X`.
