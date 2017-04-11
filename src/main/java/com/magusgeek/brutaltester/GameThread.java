@@ -13,7 +13,6 @@ import com.magusgeek.brutaltester.util.Mutable;
 public class GameThread extends Thread {
     private static final Log LOG = LogFactory.getLog(GameThread.class);
     
-    private int id;
     private Mutable<Integer> count;
     private PlayerStats[] playerStats;
     private int n;
@@ -27,7 +26,7 @@ public class GameThread extends Thread {
     private int game;
 
     public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats[] playerStats, int n, Path logs) {
-        this.id = id;
+        super("GameThread " + id);
         this.count = count;
         this.playerStats = playerStats;
         this.n = n;
@@ -81,15 +80,18 @@ public class GameThread extends Thread {
                     players.add(new BrutalProcess(builder.start()));
                 }
                 
+                referee.getOut().println("###Start " + players.size());
+                referee.getOut().flush();
+                
                 String line = referee.getIn().nextLine();
                 log("Referee: " + line);
           
                 while (!line.startsWith("###End")) {
+                    referee.clearErrorStream(this, "Referee error: ");
+                    
                     if (line.startsWith("###Input")) {
                         // Read all lines from the referee until next command and give it to the targeted process
                         PrintStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOut();
-                        referee.clearErrorStream(this, "Referee error: ");
-                        
                         line = referee.getIn().nextLine();
                         while (!line.startsWith("###")) {
                             log("Referee: " + line);
@@ -99,7 +101,6 @@ public class GameThread extends Thread {
                         }
                         
                         outputStream.flush();
-                        referee.clearErrorStream(this, "Referee error: ");
                     } else if (line.startsWith("###Output")) {
                         // Read x lines from the targeted process and give to the referee
                         int target = Character.getNumericValue(line.charAt(10));
@@ -115,7 +116,6 @@ public class GameThread extends Thread {
                         }
                     
                         referee.getOut().flush();
-                        player.clearErrorStream(this, "Player " + target + " error: ");
                         
                         line = referee.getIn().nextLine();
                     } else if (line.startsWith("###Error")) {
@@ -136,7 +136,7 @@ public class GameThread extends Thread {
                 
                 LOG.info("End of game " + game + ": " + line.substring(7));
             } catch (Exception exception) {
-                LOG.error("Exception in GameThread " + id, exception);
+                LOG.error("Exception in game " + game, exception);
             } finally {
                 destroyAll();
             }
