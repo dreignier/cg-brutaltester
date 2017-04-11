@@ -70,6 +70,15 @@ To stop the game, the referee must output `###End <results>`. The `results` cont
  * `###End 1 03 2` : Player 2 is the winner. Player 1 and 4 are both at the second place. Player 3 is the third.
  * `###End 02 31` : Players 1 and 3 are both at the first place. Players 4 and 2 are both at the second place.
  
+## Incoming features
+
+This is not an official roadmap at all.
+
+ * Generate an html file for the results (with graphics !)
+ * Better handling of crashing players code
+ * Handle timeouts
+ * Conquer the world 
+ 
 # List of compatibles referees
 
  * Ghost in the cell (Java) : https://github.com/dreignier/cg-referee-ghost-in-the-cell
