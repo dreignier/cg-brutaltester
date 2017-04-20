@@ -99,6 +99,9 @@ This is not an official roadmap at all.
  
 # List of compatibles referees
 
- * Ghost in the cell (Java) : https://github.com/dreignier/cg-referee-ghost-in-the-cell
- * Coders of the Caribbean (Java) : https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean
+ * Ghost in the cell: 
+   * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java)
+ * Coders of the Caribbean: 
+   * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java) 
+   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java) 
 
