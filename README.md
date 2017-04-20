@@ -4,7 +4,7 @@ cg-brutaltester is a Java local tool to simulate the [CodinGame](https://www.cod
 
     java -jar cg-brutaltester.jar -r "java -jar cg-referee-ghost-in-the-cell.jar" -p1 "./myCode.exe" -p2 "php myCode.php" -t 2 -n 100 -l "./logs/"
     
-At the end of the command, you will gete something like this:
+At the end of the command, you will get something like this:
 
     13:19:47,629 INFO  [com.magusgeek.brutaltester.Main] *** End of games ***
     13:19:47,631 INFO  [com.magusgeek.brutaltester.Main] *** Statistics for player 1:
@@ -100,6 +100,5 @@ This is not an official roadmap at all.
 # List of compatibles referees
 
  * Ghost in the cell (Java) : https://github.com/dreignier/cg-referee-ghost-in-the-cell
-
-
+ * Coders of the Caribbean (Java) : https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean
 
