@@ -4,7 +4,7 @@ cg-brutaltester is a Java local tool to simulate the [CodinGame](https://www.cod
 
     java -jar cg-brutaltester.jar -r "java -jar cg-referee-ghost-in-the-cell.jar" -p1 "./myCode.exe" -p2 "php myCode.php" -t 2 -n 100 -l "./logs/"
     
-At the end of the command, you will gete something like this:
+At the end of the command, you will get something like this:
 
     13:19:47,629 INFO  [com.magusgeek.brutaltester.Main] *** End of games ***
     13:19:47,631 INFO  [com.magusgeek.brutaltester.Main] *** Statistics for player 1:
@@ -22,7 +22,7 @@ At the end of the command, you will gete something like this:
 
 ### Referee `-r <string>` Mandatory.
 
-This is the command line to start the referee process. The referee must respect the cg-brutaltester protocol. See "How to make my own referee ?" for more informations.
+This is the command line to start the referee process. The referee must respect the cg-brutaltester protocol. See [How to make my own referee ?](#how-to-make-my-own-referee-) for more informations.
 In our example, we use a runnable Jar file as the referee.
 
 ### Player X `-pX <string>` Mandatory.
@@ -72,15 +72,15 @@ The first line received by the referee will be `###Start N`. Where `N` is the nu
 
 ### Send intputs for a player
 
-If the referee want to give inputs for a player, it must first output `###Input X\n` where `X` is the index of the player (player 1 is `0`). Don't forge the `\n`. After this line, every output of the referee will be forwarded to the process of the player `X`.
+If the referee want to give inputs for a player, it must first output `###Input X\n` where `X` is the index of the player (player 1 is `0`). Don't forget the `\n`. After this line, every output of the referee will be forwarded to the process of the player `X`.
 
 ### Asking for outputs of a player
 
-If the referee want to receive outputs from a player, it must output `###Output X N`. `X` is the index of the player (player 1 is `0`). `N` is the number of lines. If you want 5 lines of outputs from player 3, just output `###Output 2 5`.
+If the referee want to receive outputs from a player, it must output `###Output X N\n`. `X` is the index of the player (player 1 is `0`). `N` is the number of lines. Don't forget the `\n`. If you want 5 lines of outputs from player 3, just output `###Output 2 5\n`.
 
 ### End of the game
 
-To stop the game, the referee must output `###End <results>`. The `results` contains the position of each players separated by a space. If some players at the same position, just put the players index in the same position. Some examples:
+To stop the game, the referee must output `###End <results>\n`. Don't forget the `\n`. The `results` contains the position of each players separated by a space. If some players at the same position, just put the players index in the same position. Some examples:
 
  * `###End 0 2 3 1` : Player 1 is the winner. Player 3 is the second. Player 4 is the third. Player 2 is the fourth.
  * `###End 1 0` : Player 2 is the winner. Player 1 is the second.
@@ -99,7 +99,9 @@ This is not an official roadmap at all.
  
 # List of compatibles referees
 
- * Ghost in the cell (Java) : https://github.com/dreignier/cg-referee-ghost-in-the-cell
-
-
+ * Ghost in the cell: 
+   * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java)
+ * Coders of the Caribbean: 
+   * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java) 
+   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java) 
 
