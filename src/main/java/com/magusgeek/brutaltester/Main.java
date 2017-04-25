@@ -15,7 +15,7 @@ import com.magusgeek.brutaltester.util.Mutable;
 public class Main {
     private static final Log LOG = LogFactory.getLog(Main.class);
     
-    private static PlayerStats[] playerStats;
+    private static PlayerStats playerStats;
     private static int t;
     private static int finished = 0;
 
@@ -91,11 +91,7 @@ public class Main {
             }
 
             // Prepare stats objects
-            playerStats = new PlayerStats[playersCmd.size()];
-            for (int i = 0; i < playersCmd.size(); ++i) {
-                playerStats[i] = new PlayerStats();
-            }
-
+            playerStats = new PlayerStats(playersCmd.size());
             Mutable<Integer> count = new Mutable<>(0);
             
             // Start the threads
@@ -114,10 +110,7 @@ public class Main {
             
             if (finished >= t) {
                 LOG.info("*** End of games ***");
-                for (int i = 0; i < playerStats.length; ++i) {
-                    LOG.info("*** Statistics for player " + (i + 1) + ":");
-                    playerStats[i].print();
-                }
+                playerStats.print();
             }
         }
     }

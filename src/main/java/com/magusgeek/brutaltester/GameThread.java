@@ -14,7 +14,7 @@ public class GameThread extends Thread {
     private static final Log LOG = LogFactory.getLog(GameThread.class);
     
     private Mutable<Integer> count;
-    private PlayerStats[] playerStats;
+    private PlayerStats playerStats;
     private int n;
     private List<BrutalProcess> players;
     private BrutalProcess referee;
@@ -25,7 +25,7 @@ public class GameThread extends Thread {
     private List<ProcessBuilder> playerBuilders;
     private int game;
 
-    public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats[] playerStats, int n, Path logs) {
+    public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats playerStats, int n, Path logs) {
         super("GameThread " + id);
         this.count = count;
         this.playerStats = playerStats;
@@ -124,17 +124,11 @@ public class GameThread extends Thread {
                     }
                 }
                 
-                log("Referee: " + line);
-                
                 // End of the game
-                String[] params = line.split(" ");
-                for (int i = 1; i < params.length; ++i) {
-                    for (char c : params[i].toCharArray()) {
-                        playerStats[Character.getNumericValue(c)].add(i - 1);
-                    }
-                }
+                log("Referee: " + line);
+                playerStats.add(line);
                 
-                LOG.info("End of game " + game + ": " + line.substring(7));
+                LOG.info("End of game " + game + ": " + line.substring(7) + "\t" + playerStats);
             } catch (Exception exception) {
                 LOG.error("Exception in game " + game, exception);
             } finally {
