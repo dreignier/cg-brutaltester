@@ -35,12 +35,12 @@ public class PlayerStats {
         
         for (int i = 0; i < n; ++i) {
             for (int j = i + 1; j < n; ++j) { // <- 
-                if (positions[i] > positions[j]) {
+                if (positions[i] < positions[j]) {
                     stats[i][j][VICTORY] += 1;
                     stats[j][i][DEFEAT] += 1;
                     global[i][VICTORY] += 1;
                     global[j][DEFEAT] += 1;
-                } else if (positions[i] < positions[j]) {
+                } else if (positions[i] > positions[j]) {
                     stats[j][i][VICTORY] += 1;
                     stats[i][j][DEFEAT] += 1;
                     global[j][VICTORY] += 1;
@@ -58,7 +58,7 @@ public class PlayerStats {
     }
     
     private String percent(float amount) {
-        return String.format("%.2f", amount / total);
+        return String.format("%.2f", amount * 100.0 / total) + "%";
     }
     
     public String toString() {
@@ -71,7 +71,7 @@ public class PlayerStats {
         return sb.toString();
     }
     
-    public void print() {
+    synchronized public void print() {
         /*
          +----------+----------+----------+----------+----------+
          | Results  | Player 1 | Player 2 | Player 3 | Player 4 |
