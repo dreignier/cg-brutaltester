@@ -34,7 +34,7 @@ public class PlayerStats {
         }
         
         for (int i = 0; i < n; ++i) {
-            for (int j = i + 1; j < n; ++i) {
+            for (int j = i + 1; j < n; ++j) { // <- 
                 if (positions[i] > positions[j]) {
                     stats[i][j][VICTORY] += 1;
                     stats[j][i][DEFEAT] += 1;
