@@ -7,16 +7,15 @@ cg-brutaltester is a Java local tool to simulate the [CodinGame](https://www.cod
 At the end of the command, you will get something like this:
 
     13:19:47,629 INFO  [com.magusgeek.brutaltester.Main] *** End of games ***
-    13:19:47,631 INFO  [com.magusgeek.brutaltester.Main] *** Statistics for player 1:
-    13:19:47,633 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 1 : 21 (42%)
-    13:19:47,633 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 2 : 29 (58%)
-    13:19:47,634 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 3 : 0 (0%)
-    13:19:47,634 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 4 : 0 (0%)
-    13:19:47,635 INFO  [com.magusgeek.brutaltester.Main] *** Statistics for player 2:
-    13:19:47,635 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 1 : 47 (94%)
-    13:19:47,636 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 2 : 3 (6%)
-    13:19:47,636 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 3 : 0 (0%)
-    13:19:47,637 INFO  [com.magusgeek.brutaltester.PlayerStats]  Position 4 : 0 (0%)
+    +----------+----------+----------+
+    | Results  | Player 1 | Player 2 |
+    +----------+----------+----------+
+    | Player 1 |          | 7,00%    |
+    +----------+----------+----------+
+    | Player 2 | 52,70%   |          |
+    +----------+----------+----------+
+    
+How to read it: Player 1 won 7.00% of the time against Player 2. Player 2 won 52.70% of the time against Player 1. The total is not 100% because you have some draw.
         
 ## Command line arguments:
 
