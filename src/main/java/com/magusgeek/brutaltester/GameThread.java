@@ -113,6 +113,7 @@ public class GameThread extends Thread {
                             String playerLine = player.getIn().readLine();
                             log("Player " + target + ": " + playerLine);
                             referee.getOut().println(playerLine);
+                            player.clearErrorStream(this, "Player " + target + " error: ");
                         }
                     
                         referee.getOut().flush();
