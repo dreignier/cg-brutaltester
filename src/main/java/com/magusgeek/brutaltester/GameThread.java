@@ -83,21 +83,21 @@ public class GameThread extends Thread {
                 referee.getOut().println("###Start " + players.size());
                 referee.getOut().flush();
                 
-                String line = referee.getIn().readLine();
-
+                String line = referee.getIn().nextLine();
+                log("Referee: " + line);
+          
                 while (!line.startsWith("###End")) {
-                	log("Referee: " + line);
                     referee.clearErrorStream(this, "Referee error: ");
                     
                     if (line.startsWith("###Input")) {
                         // Read all lines from the referee until next command and give it to the targeted process
                         PrintStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOut();
-                        line = referee.getIn().readLine();
+                        line = referee.getIn().nextLine();
                         while (!line.startsWith("###")) {
                             log("Referee: " + line);
                             
                             outputStream.println(line);
-                            line = referee.getIn().readLine();
+                            line = referee.getIn().nextLine();
                         }
                         
                         outputStream.flush();
@@ -110,14 +110,14 @@ public class GameThread extends Thread {
                         player.clearErrorStream(this, "Player " + target + " error: ");
                         
                         for (int i = 0; i < x; ++i) {
-                            String playerLine = player.getIn().readLine();
+                            String playerLine = player.getIn().nextLine();
                             log("Player " + target + ": " + playerLine);
                             referee.getOut().println(playerLine);
                         }
                     
                         referee.getOut().flush();
                         
-                        line = referee.getIn().readLine();
+                        line = referee.getIn().nextLine();
                     } else if (line.startsWith("###Error")) {
                         int target = Character.getNumericValue(line.charAt(9));
                         LOG.warn("Error for player " + target + " in game " + game + ": " + line.substring(9));

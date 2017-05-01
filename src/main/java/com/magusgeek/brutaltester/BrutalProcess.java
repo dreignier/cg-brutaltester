@@ -7,13 +7,13 @@ public class BrutalProcess {
 
     private Process process;
     private PrintStream out;
-    private BufferedReader in;
+    private Scanner in;
     private BufferedReader error;
     
     public BrutalProcess(Process process) {
         this.process = process;
         out = new PrintStream(process.getOutputStream());
-        in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        in = new Scanner(process.getInputStream());
         error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
     }
     
@@ -42,7 +42,7 @@ public class BrutalProcess {
         return out;
     }
 
-    public BufferedReader getIn() {
+    public Scanner getIn() {
         return in;
     }
 
