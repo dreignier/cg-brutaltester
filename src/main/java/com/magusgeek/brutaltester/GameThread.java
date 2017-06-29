@@ -103,8 +103,9 @@ public class GameThread extends Thread {
                         outputStream.flush();
                     } else if (line.startsWith("###Output")) {
                         // Read x lines from the targeted process and give to the referee
-                        int target = Character.getNumericValue(line.charAt(10));
-                        int x =  Character.getNumericValue(line.charAt(12));
+                        String[] parts = line.split(" ");
+                        int target = Integer.parseInt(parts[1]);
+                        int x = Integer.parseInt(parts[2]);
                         
                         BrutalProcess player = players.get(target);
                         player.clearErrorStream(this, "Player " + target + " error: ");
