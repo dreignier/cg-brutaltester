@@ -3,7 +3,7 @@
 cg-brutaltester is a Java local tool to simulate the [CodinGame](https://www.codingame.com/) multiplayer IDE. How it works ? Very simple :
 
     java -jar cg-brutaltester.jar -r "java -jar cg-referee-ghost-in-the-cell.jar" -p1 "./myCode.exe" -p2 "php myCode.php" -t 2 -n 100 -l "./logs/"
-    
+
 At the end of the command, you will get something like this:
 
     13:19:47,629 INFO  [com.magusgeek.brutaltester.Main] *** End of games ***
@@ -14,9 +14,9 @@ At the end of the command, you will get something like this:
     +----------+----------+----------+
     | Player 2 | 52,70%   |          |
     +----------+----------+----------+
-    
+
 How to read it: Player 1 won 7.00% of the time against Player 2. Player 2 won 52.70% of the time against Player 1. The total is not 100% because you have some draw.
-        
+
 ## Command line arguments:
 
 ### Referee `-r <string>` Mandatory.
@@ -86,7 +86,7 @@ To stop the game, the referee must output `###End <results>\n`. Don't forget the
  * `###End 01` : It's a draw between players 1 and 2.
  * `###End 1 03 2` : Player 2 is the winner. Player 1 and 4 are both at the second place. Player 3 is the third.
  * `###End 02 31` : Players 1 and 3 are both at the first place. Players 4 and 2 are both at the second place.
- 
+
 ## Incoming features
 
 This is not an official roadmap at all.
@@ -94,13 +94,16 @@ This is not an official roadmap at all.
  * Generate an html file for the results (with graphics !)
  * Better handling of crashing players code
  * Handle timeouts
- * Conquer the world 
- 
+ * Conquer the world
+
 # List of compatibles referees
 
- * Ghost in the cell: 
+ * Ghost in the cell:
    * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java)
- * Coders of the Caribbean: 
-   * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java) 
-   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java) 
-
+ * Coders of the Caribbean:
+   * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java)
+   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java)
+ * Code 4 life:
+   * https://github.com/KevinBusse/cg-referee-code4life (Java)
+ * Wondev Woman:
+   * https://github.com/KevinBusse/cg-referee-wondev-woman (Java)
