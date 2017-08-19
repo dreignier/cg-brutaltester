@@ -109,6 +109,8 @@ This is not an official roadmap at all.
 
 # List of compatibles referees
 
+If you have a bug or a problem with one of these referees, create an issue of the github project of the referee, not on cg-brutaltester project. This may not be a full list of available referees for cg-brutaltester. If you want to add a referee to this list, just make a pull request.
+
  * Ghost in the cell:
    * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java)
  * Coders of the Caribbean:
@@ -119,18 +121,18 @@ This is not an official roadmap at all.
  * Wondev Woman:
    * https://github.com/KevinBusse/cg-referee-wondev-woman (Java)
  * Coders strike back:
-   * https://github.com/robostac/coders-strike-back-referee (Go, unofficial)
+   * https://github.com/robostac/coders-strike-back-referee (Go)
  * Back to the Code:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
  * Codebusters:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
  * Game of Drones:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
  * Hypersonic:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
  * Smash the Code:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
  * The Great Escape:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
  * Tron:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#)
