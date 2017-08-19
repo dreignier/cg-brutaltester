@@ -1,20 +1,19 @@
 package com.magusgeek.brutaltester;
 
+import com.magusgeek.brutaltester.util.Mutable;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.cli.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 
-import com.magusgeek.brutaltester.util.Mutable;
-
 public class Main {
+
     private static final Log LOG = LogFactory.getLog(Main.class);
-    
+
     private static PlayerStats playerStats;
     private static int t;
     private static int finished = 0;
@@ -24,15 +23,16 @@ public class Main {
             Options options = new Options();
 
             options.addOption("h", false, "Print the help")
-                   .addOption("v", false, "Verbose mode. Spam incoming.")
-                   .addOption("n", true, "Number of games to play. Default 1.")
-                   .addOption("t", true, "Number of thread to spawn for the games. Default 1.")
-                   .addOption("r", true, "Required. Referee command line.")
-                   .addOption("p1", true, "Required. Player 1 command line.")
-                   .addOption("p2", true, "Required. Player 2 command line.")
-                   .addOption("p3", true, "Player 3 command line.")
-                   .addOption("p4", true, "Player 4 command line.")
-                   .addOption("l", true, "A directory for games logs");
+                    .addOption("v", false, "Verbose mode. Spam incoming.")
+                    .addOption("n", true, "Number of games to play. Default 1.")
+                    .addOption("t", true, "Number of thread to spawn for the games. Default 1.")
+                    .addOption("r", true, "Required. Referee command line.")
+                    .addOption("p1", true, "Required. Player 1 command line.")
+                    .addOption("p2", true, "Required. Player 2 command line.")
+                    .addOption("p3", true, "Player 3 command line.")
+                    .addOption("p4", true, "Player 4 command line.")
+                    .addOption("l", true, "A directory for games logs")
+                    .addOption("s", false, "swap player positions");
 
             CommandLine cmd = new DefaultParser().parse(options, args);
 
@@ -80,7 +80,7 @@ public class Main {
 
             }
             LOG.info("Number of threads to spawn: " + t);
-            
+
             // Logs directory
             Path logs = null;
             if (cmd.hasOption("l")) {
@@ -90,24 +90,26 @@ public class Main {
                 }
             }
 
+            boolean swap = cmd.hasOption("s");
+
             // Prepare stats objects
             playerStats = new PlayerStats(playersCmd.size());
             Mutable<Integer> count = new Mutable<>(0);
-            
+
             // Start the threads
             for (int i = 0; i < t; ++i) {
-                new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs).start();
+                new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs, swap).start();
             }
         } catch (Exception exception) {
             LOG.fatal("cg-brutaltester failed to start", exception);
             System.exit(1);
         }
     }
-    
+
     public static void finish() {
         synchronized (playerStats) {
             finished += 1;
-            
+
             if (finished >= t) {
                 LOG.info("*** End of games ***");
                 playerStats.print();
