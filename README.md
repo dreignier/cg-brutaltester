@@ -41,6 +41,11 @@ The number of games to play. The given example will play 100 games.
 
 You may need the logs of the file. If you specify a directory, all games will be saved in the given directory. The files contains standard and errors outputs of all process (referee and players).
 
+### Swap player positions `-s`
+
+There are some games (such as Tron), where one player has a disadvantage from the beginning on because of an asymmetric map. In this case you can repeat the game on the same map, but with positions changed. For more than two players this will perform a simple rotation and not test all permutations (resulting in 4 matches on the same map for 4 players instead of 24).
+NOTE: not all referees support this flag, as they have to allow setting a seed.
+
 ### Verbose `-v`
 
 Activate the verbose mode. Spam incoming.
@@ -58,12 +63,18 @@ Display this help :
      -p3 <arg>   Player 3 command line.
      -p4 <arg>   Player 4 command line.
      -r <arg>    Required. Referee command line.
+     -s          swap player positions
      -t <arg>    Number of thread to spawn for the games. Default 1.
      -v          Verbose mode. Spam incoming.
 
 ## How to make my own referee ?
 
 Your referee must be runnable with a command line (or you won't be able to give it to cg-brutaltester) and you have to use the standard input and output streams. The referee can output on the error stream for debug purposes or real errors. It will be stored in the log file of the game. cg-brutaltester is a very naive arena, and the referee must tell it how to work.
+
+### Setting a seed (optional)
+
+If you want to swap player positions (useful on asymmetric maps), read the line `###Seed N`, with N >= 0. This line will be passed even before `###Start`, if the `-s` flag is set for starting the brutaltester.
+When getting the same seed, your referee has to create the same map.
 
 ### Start of a game
 
@@ -107,3 +118,19 @@ This is not an official roadmap at all.
    * https://github.com/KevinBusse/cg-referee-code4life (Java)
  * Wondev Woman:
    * https://github.com/KevinBusse/cg-referee-wondev-woman (Java)
+ * Coders strike back:
+   * https://github.com/robostac/coders-strike-back-referee (Go, unofficial)
+ * Back to the Code:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+ * Codebusters:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+ * Game of Drones:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+ * Hypersonic:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+ * Smash the Code:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+ * The Great Escape:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
+ * Tron:
+   * https://github.com/eulerscheZahl/RefereeCollection (C#, unofficial)
