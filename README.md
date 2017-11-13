@@ -21,7 +21,7 @@ How to read it: Player 1 won 7.00% of the time against Player 2. Player 2 won 52
 
 ### Referee `-r <string>` (Mandatory)
 
-This is the command line to start the referee process. The referee must respect the cg-brutaltester protocol. See [How do I make my own referee?](#how-do-I-make-my-own-referee) for more information.
+This is the command line to start the referee process. The referee must respect the cg-brutaltester protocol. See [How do I make my own referee?](#how-do-i-make-my-own-referee) for more information.
 In our example, we use a runnable Jar file as the referee.
 
 ### Player X `-pX <string>` (Mandatory)
