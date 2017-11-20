@@ -120,6 +120,8 @@ If you have a bug or a problem with one of these referees, create an issue of th
    * https://github.com/KevinBusse/cg-referee-code4life (Java)
  * Wondev Woman:
    * https://github.com/KevinBusse/cg-referee-wondev-woman (Java)
+ * Mean Max:
+   * https://github.com/KevinBusse/cg-referee-mean-max (Java)
  * Coders strike back:
    * https://github.com/robostac/coders-strike-back-referee (Go)
  * Back to the Code:
