@@ -17,6 +17,15 @@ At the end of the command, you will get something like this:
 
 How to read it: Player 1 won 7.00% of the time against Player 2. Player 2 won 52.70% of the time against Player 1. The total is not 100% because you have some draws.
 
+## How to build from sources
+
+1. Install Java 1.8 (JDK)
+2. Install Maven. 
+3. Run in command line `<path_to_maven>/mvn package` inside root directory of this repo.
+4. ./target/cg-brutaltester-0.0.1-SNAPSHOT.jar — is compiled brutaltester! You can rename it to cg-brutaltester.jar to make command line above work.
+
+Now you should get (or compile from sources) referee for specific game and make it work together with brutaltester as stated above.
+
 ## Command line arguments:
 
 ### Referee `-r <string>` (Mandatory)
