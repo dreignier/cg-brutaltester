@@ -87,6 +87,9 @@ public class GameThread extends Thread {
                 if (swap) {
                     referee.getOut().println("###Seed " + seedRotate[0]);
                 }
+                else if (SeedGenerator.repeteableTests){
+                    referee.getOut().println("###Seed " + SeedGenerator.nextSeed());
+                }
                 referee.getOut().println("###Start " + players.size());
                 referee.getOut().flush();
 

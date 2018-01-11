@@ -50,10 +50,14 @@ The number of games to play. The given example will play 100 games.
 
 You may need the logs of the file. If you specify a directory, all games will be saved in the given directory. The files contain standard and error outputs of all processes (referee and players).
 
-### Swap player positions `-s`
+### Swap player positions `-s` (Optional)
 
 There are some games (such as Tron), where one player has a disadvantage from the beginning on because of an asymmetric map. In this case you can repeat the game on the same map, but with positions changed. For more than two players this will perform a simple rotation and not test all permutations (resulting in 4 matches on the same map for 4 players instead of 24).
 NOTE: not all referees support this flag, as they have to allow setting a seed.
+
+### Initial Seed `-i <int>` (Optional)
+
+It allows to use the same seeds in different runs. You can't select individual seeds, but only the starting seed for the Random Number Generator. It's useful to have repeteable tests.
 
 ### Verbose `-v`
 
@@ -72,7 +76,8 @@ Display this help :
      -p3 <arg>   Player 3 command line.
      -p4 <arg>   Player 4 command line.
      -r <arg>    Required. Referee command line.
-     -s          swap player positions
+     -s          Swap player positions
+     -i <arg>    Initial Seed. For repeteable tests.
      -t <arg>    Number of thread to spawn for the games. Default 1.
      -v          Verbose mode. Spam incoming.
 

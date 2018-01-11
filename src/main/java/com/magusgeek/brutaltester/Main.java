@@ -1,6 +1,7 @@
 package com.magusgeek.brutaltester;
 
 import com.magusgeek.brutaltester.util.Mutable;
+import com.magusgeek.brutaltester.util.SeedGenerator;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,8 @@ public class Main {
                     .addOption("p3", true, "Player 3 command line.")
                     .addOption("p4", true, "Player 4 command line.")
                     .addOption("l", true, "A directory for games logs")
-                    .addOption("s", false, "swap player positions");
+                    .addOption("s", false, "Swap player positions")
+                    .addOption("i", true, "Initial seed. For repeatable tests");
 
             CommandLine cmd = new DefaultParser().parse(options, args);
 
@@ -91,7 +93,12 @@ public class Main {
             }
 
             boolean swap = cmd.hasOption("s");
-
+            //Seed Initialization
+            if (cmd.hasOption("i")){
+                long newSeed = Integer.valueOf(cmd.getOptionValue("i"));
+                SeedGenerator.initialSeed(newSeed);
+                LOG.info("Initial Seed: " + newSeed);
+            }
             // Prepare stats objects
             playerStats = new PlayerStats(playersCmd.size());
             Mutable<Integer> count = new Mutable<>(0);
