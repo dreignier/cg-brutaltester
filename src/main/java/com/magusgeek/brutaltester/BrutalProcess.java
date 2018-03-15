@@ -17,7 +17,7 @@ public class BrutalProcess {
         error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
     }
     
-    public void clearErrorStream(GameThread thread, String prefix) throws IOException {
+    public void clearErrorStream(OldGameThread thread, String prefix) throws IOException {
         while (error.ready()) {
             thread.log(prefix + error.readLine());
         }

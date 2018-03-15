@@ -24,23 +24,24 @@ public class Main {
             Options options = new Options();
 
             options.addOption("h", false, "Print the help")
-                    .addOption("v", false, "Verbose mode. Spam incoming.")
-                    .addOption("n", true, "Number of games to play. Default 1.")
-                    .addOption("t", true, "Number of thread to spawn for the games. Default 1.")
-                    .addOption("r", true, "Required. Referee command line.")
-                    .addOption("p1", true, "Required. Player 1 command line.")
-                    .addOption("p2", true, "Required. Player 2 command line.")
-                    .addOption("p3", true, "Player 3 command line.")
-                    .addOption("p4", true, "Player 4 command line.")
-                    .addOption("l", true, "A directory for games logs")
-                    .addOption("s", false, "Swap player positions")
-                    .addOption("i", true, "Initial seed. For repeatable tests");
+                   .addOption("v", false, "Verbose mode. Spam incoming.")
+                   .addOption("n", true, "Number of games to play. Default 1.")
+                   .addOption("t", true, "Number of thread to spawn for the games. Default 1.")
+                   .addOption("r", true, "Required. Referee command line.")
+                   .addOption("p1", true, "Required. Player 1 command line.")
+                   .addOption("p2", true, "Required. Player 2 command line.")
+                   .addOption("p3", true, "Player 3 command line.")
+                   .addOption("p4", true, "Player 4 command line.")
+                   .addOption("l", true, "A directory for games logs")
+                   .addOption("s", false, "Swap player positions")
+                   .addOption("i", true, "Initial seed. For repeatable tests")
+                   .addOption("o", false, "Old mode");
 
             CommandLine cmd = new DefaultParser().parse(options, args);
 
             // Need help ?
             if (cmd.hasOption("h") || !cmd.hasOption("r") || !cmd.hasOption("p1") || !cmd.hasOption("p2")) {
-                new HelpFormatter().printHelp("-r <referee command line> -p1 <player1 command line> -p2 <player2 command line> -p3 <player3 command line> -p4 <player4 command line> [-v -n <games> -t <thread>]", options);
+                new HelpFormatter().printHelp("-r <referee command line> -p1 <player1 command line> -p2 <player2 command line> -p3 <player3 command line> -p4 <player4 command line> [-o -v -n <games> -t <thread>]", options);
                 System.exit(0);
             }
 
@@ -105,7 +106,11 @@ public class Main {
 
             // Start the threads
             for (int i = 0; i < t; ++i) {
-                new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs, swap).start();
+            	if (cmd.hasOption("o")) {
+            		new OldGameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs, swap).start();
+            	} else {
+            		new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs).start();
+            	}
             }
         } catch (Exception exception) {
             LOG.fatal("cg-brutaltester failed to start", exception);
