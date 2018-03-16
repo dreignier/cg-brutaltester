@@ -59,6 +59,10 @@ NOTE: not all referees support this flag, as they have to allow setting a seed.
 
 It allows to use the same seeds in different runs. You can't select individual seeds, but only the starting seed for the Random Number Generator. It's useful to have repeteable tests.
 
+### Old mode `-o` (Optional)
+
+Since Botters of the Galaxy and Ultimate Tic Tac Toe, Codingame changed a lot the way of creating a referee. Because of that, all games created because Botters of the Galaxy and Ultimate Tic Tac Toe use the "old way". If you want to use an old referee, you have to use this flag. 
+
 ### Verbose `-v`
 
 Activate the verbose mode. Spam incoming.
@@ -83,34 +87,24 @@ Display this help :
 
 ## How do I make my own referee?
 
+### WARNING !
+
+Since Botters of the Galaxy and Ultimate Tic Tac Toe, CodinGame change a lot the way of creating a referee. Because of that, cg-brutaltester had to adapt.
+
+If you want to use or create a referee for a game created before Botters of the Galaxy or Ultimate Tic Tac Toe, use this [wiki page](https://github.com/dreignier/cg-brutaltester/wiki/How-to-create-an-old-referee).
+
 Your referee must be runnable with a command line (or you won't be able to give it to cg-brutaltester) and you have to use the standard input and output streams. The referee can output on the error stream for debug purposes or real errors. It will be stored in the log file of the game. cg-brutaltester is a very naive arena, and the referee must tell it how to work.
 
-### Setting a seed (optional)
+### All steps
 
-If you want to swap player positions (useful on asymmetric maps), read the line `###Seed N`, with N >= 0. This line will be passed even before `###Start`, if the `-s` flag is set for starting the brutaltester.
-When getting the same seed, your referee has to create the same map.
+As an example, you can check my [Ultime Tic Tac Toe brutaltester referee](https://github.com/dreignier/game-ultimate-tictactoe)
+To create your own referee for cg-brutaltester, there's X steps to follow:
 
-### Start of a game
-
-The first line received by the referee will be `###Start N`. Where `N` is the number of players for this game.
-
-### Send inputs for a player
-
-If the referee wants to give inputs for a player, it must first output `###Input X\n` where `X` is the index of the player (player 1 is `0`). Don't forget the `\n`. After this line, every output of the referee will be forwarded to the process of the player `X`.
-
-### Asking for outputs of a player
-
-If the referee wants to receive outputs from a player, it must output `###Output X N\n`. `X` is the index of the player (player 1 is `0`). `N` is the number of lines. Don't forget the `\n`. If you want 5 lines of outputs from player 3, just output `###Output 2 5\n`.
-
-### End of the game
-
-To stop the game, the referee must output `###End <results>\n`. Don't forget the `\n`. The `results` contain the position of each player separated by a space. If some players end at the same position, just put those players' indexes in the same position. Some examples:
-
- * `###End 0 2 3 1` : Player 1 is the winner. Player 3 is the second. Player 4 is the third. Player 2 is the fourth.
- * `###End 1 0` : Player 2 is the winner. Player 1 is the second.
- * `###End 01` : It's a draw between players 1 and 2.
- * `###End 1 03 2` : Player 2 is the winner. Player 1 and 4 are both at the second place. Player 3 is the third.
- * `###End 02 31` : Players 1 and 3 are both at the first place. Players 4 and 2 are both at the second place.
+ * Fork the referee repository
+ * Modify the [`pom.xml`](https://github.com/dreignier/game-ultimate-tictactoe/blob/master/pom.xml) file. 
+ * Add the [`CommandLineInterface`](https://github.com/dreignier/game-ultimate-tictactoe/blob/master/src/main/java/com/codingame/gameengine/runner/CommandLineInterface.java) class in the package `com.codingame.gameengine.runner`
+ 
+I'm currently thinking of a way to automate the process. Copy/pasting `CommandLineInterface` is good enough for now, but this is clearly not the best thing to do.
 
 ## Incoming features
 
@@ -125,30 +119,32 @@ This is not an official roadmap at all.
 
 If you have a bug or a problem with one of these referees, create an issue of the github project of the referee, not on cg-brutaltester project. This may not be a full list of available referees for cg-brutaltester. If you want to add a referee to this list, just make a pull request.
 
+ * Ultimate Tic Tac Toe
+   * https://github.com/dreignier/game-ultimate-tictactoe (Java)
  * Ghost in the cell:
-   * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java)
+   * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java) (use it with `-o`)
  * Coders of the Caribbean:
-   * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java)
-   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java)
+   * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java) (use it with `-o`)
+   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java) (use it with `-o`)
  * Code 4 life:
-   * https://github.com/KevinBusse/cg-referee-code4life (Java)
+   * https://github.com/KevinBusse/cg-referee-code4life (Java) (use it with `-o`)
  * Wondev Woman:
-   * https://github.com/KevinBusse/cg-referee-wondev-woman (Java)
+   * https://github.com/KevinBusse/cg-referee-wondev-woman (Java) (use it with `-o`)
  * Mean Max:
-   * https://github.com/KevinBusse/cg-referee-mean-max (Java)
+   * https://github.com/KevinBusse/cg-referee-mean-max (Java) (use it with `-o`)
  * Coders strike back:
-   * https://github.com/robostac/coders-strike-back-referee (Go)
+   * https://github.com/robostac/coders-strike-back-referee (Go) (use it with `-o`)
  * Back to the Code:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
  * Codebusters:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
  * Game of Drones:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
  * Hypersonic:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
  * Smash the Code:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
  * The Great Escape:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
  * Tron:
-   * https://github.com/eulerscheZahl/RefereeCollection (C#)
+   * https://github.com/eulerscheZahl/RefereeCollection (C#) (use it with `-o`)
