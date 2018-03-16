@@ -1,8 +1,10 @@
 package com.magusgeek.brutaltester;
 
-import java.io.PrintStream;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,190 +19,140 @@ public class GameThread extends Thread {
 	private int n;
 	private BrutalProcess referee;
 	private Path logs;
-	private PrintStream logsWriter;
 	private int game;
 	private String command[];
+	private int playersCount;
+	private StringBuilder data = new StringBuilder();
 
-	public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats stats, int n, Path logs) {
-		super("GameThread " + id);
+	public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats stats,
+			int n, Path logs) {
+		super("GameThread-" + id);
 		this.count = count;
 		this.stats = stats;
 		this.n = n;
 		this.logs = logs;
-		
-		command = new String[playersCmd.size() * 2 + (logs != null ? 2 : 0)];
-		
-		for (int i = 0; i < playersCmd.size(); ++i) {
-		    command[i*2] = "-p" + (i + 1);
-		    command[i*2 + 1] = playersCmd.get(i);
+		this.playersCount = playersCmd.size();
+
+		String[] splitted = refereeCmd.split(" ");
+
+		command = new String[splitted.length + playersCount * 2 + (logs != null ? 2 : 0)];
+
+		for (int i = 0; i < splitted.length; ++i) {
+			command[i] = splitted[i];
 		}
-		
+
+		for (int i = 0; i < playersCount; ++i) {
+			command[splitted.length + i * 2] = "-p" + (i + 1);
+			command[splitted.length + i * 2 + 1] = playersCmd.get(i);
+		}
+
 		if (logs != null) {
-		  command[playersCmd.size() * 2 + 2] = "-l";
+			command[playersCount * 2 + 2] = "-l";
 		}
 	}
 
-	public void log(String message) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("[Game " + game + "] " + message);
-		}
-
-		if (logsWriter != null) {
-			logsWriter.println(message);
-		}
-	}
-	
 	public void run() {
-        while (true) {
-            game = 0;
-            synchronized (count) {
-                if (count.get() < n) {
-                    game = count.get() + 1;
-                    count.set(game);
-                }
-            }
+		while (true) {
+			game = 0;
+			synchronized (count) {
+				if (count.get() < n) {
+					game = count.get() + 1;
+					count.set(game);
+				}
+			}
 
-            if (game == 0) {
-                // End of this thread
-                Main.finish();
-                break;
-            }
-            
-            try {
-              if (logs != null) {
-                command[command.length - 1] = new StringBuilder(logs.toString()).append("/game").append(game).append(".json").toString();
-              }
-              
-              referee = new BrutalProcess(Runtime.getRuntime().exec(command));
-              
-              boolean error = false;
-              StringBuilder data = new StringBuilder();
-              
-              try (Scanner in = referee.getIn()) {
-                
-              }
-              
-              try (Scanner in = new Scanner(referee.getError())) {
-                if (in.hasNext()) {
-                  error = true;
-                  LOG.error("Error during game " + game);
-                  
-                  while (in.hasNext()) {
-                    LOG.error(in.nextLine());
-                  }
-                }
-              }
-              
-              if (error) {
-                LOG.error("If you want to replay this game, use the following command line:");
-                LOG.error(String.join(" ", command) + "-d " + data);
-              }
-              
-            } catch (Exception exception) {
-                LOG.error("Exception in game " + game, exception);
-            } finally {
-                destroyAll();
-            }
+			if (game == 0) {
+				// End of this thread
+				Main.finish();
+				break;
+			}
 
-//            try {
-//            	if (this.logs != null) {
-//                    // Open logs stream
-//                    logsWriter = new PrintStream(this.logs + "/game" + game + ".log");
-//                }
-//
-//                // Spawn referee process
-//                referee = new BrutalProcess(builder.start());
-//
-//                if (swap) {
-//                    referee.getOut().println("###Seed " + seedRotate[0]);
-//                }
-//                else if (SeedGenerator.repeteableTests){
-//                    referee.getOut().println("###Seed " + SeedGenerator.nextSeed());
-//                }
-//                referee.getOut().println("###Start " + players.size());
-//                referee.getOut().flush();
-//
-//                String line = referee.getIn().nextLine();
-//                log("Referee: " + line);
-//
-//                while (!line.startsWith("###End")) {
-//                    referee.clearErrorStream(this, "Referee error: ");
-//
-//                    if (line.startsWith("###Input")) {
-//                        // Read all lines from the referee until next command and give it to the targeted process
-//                        PrintStream outputStream = players.get(Character.getNumericValue(line.charAt(9))).getOut();
-//                        line = referee.getIn().nextLine();
-//                        while (!line.startsWith("###")) {
-//                            log("Referee: " + line);
-//
-//                            outputStream.println(line);
-//                            line = referee.getIn().nextLine();
-//                        }
-//
-//                        outputStream.flush();
-//                    } else if (line.startsWith("###Output")) {
-//                        // Read x lines from the targeted process and give to the referee
-//                        String[] parts = line.split(" ");
-//                        int target = Integer.parseInt(parts[1]);
-//                        int x = Integer.parseInt(parts[2]);
-//
-//                        BrutalProcess player = players.get(target);
-//                        player.clearErrorStream(this, "Player " + target + " error: ");
-//
-//                        for (int i = 0; i < x; ++i) {
-//                            String playerLine = player.getIn().nextLine();
-//                            log("Player " + target + ": " + playerLine);
-//                            referee.getOut().println(playerLine);
-//                        }
-//
-//                        referee.getOut().flush();
-//
-//                        line = referee.getIn().nextLine();
-//                    } else if (line.startsWith("###Error")) {
-//                        int target = Character.getNumericValue(line.charAt(9));
-//                        LOG.warn("Error for player " + target + " in game " + game + ": " + line.substring(9));
-//                    }
-//                }
-//
-//                // End of the game
-//                // unswap the positions to declare the correct winner
-//                String unrotated = "";
-//                for (int i = 0; i < line.length(); i++) {
-//                    char c = line.charAt(i);
-//                    if (c >= '0' && c <= '9') {
-//                        c -= '0';
-//                        c += rotate;
-//                        c %= players.size();
-//                        c += '0';
-//                    }
-//                    unrotated += c;
-//                }
-//                line = unrotated;
-//
-//                log("Referee: " + line);
-//                playerStats.add(line);
-//
-//                LOG.info("End of game " + game + ": " + line.substring(7) + "\t" + playerStats);
-//            } catch (Exception exception) {
-//                LOG.error("Exception in game " + game, exception);
-//            } finally {
-//                destroyAll();
-//            }
-        }
-    }
-	
+			try {
+				if (logs != null) {
+					command[command.length - 1] = new StringBuilder(logs.toString()).append("/game").append(game)
+							.append(".json").toString();
+				}
+
+				referee = new BrutalProcess(Runtime.getRuntime().exec(command));
+
+				boolean error = false;
+				data.setLength(0);
+
+				int[] scores = new int[playersCount];
+
+				try (Scanner in = referee.getIn()) {
+					for (int i = 0; i < playersCount; ++i) {
+						scores[i] = in.nextInt();
+
+						if (scores[i] < 0) {
+							error = true;
+							LOG.error("Negative score during game " + game);
+						}
+					}
+
+					while (in.hasNextLine()) {
+						data.append(in.nextLine()).append("\n");
+					}
+				}
+
+				if (checkForError()) {
+					error = true;
+				}
+
+				if (error) {
+					logHelp();
+				}
+
+				stats.add(scores);
+
+				LOG.info(new StringBuilder().append("End of game ").append(game).append("\t").append(stats));
+			} catch (Exception exception) {
+				LOG.error("Exception in game " + game, exception);
+				logHelp();
+			} finally {
+				destroyAll();
+			}
+		}
+	}
+
+	private void logHelp() {
+		LOG.error("If you want to replay and see this game, use the following command line:");
+
+		if (data.length() > 0) {
+			LOG.error(String.join(" ", command) + " -s -d " + data);
+		} else {
+			LOG.error(String.join(" ", command) + " -s");
+		}
+
+	}
+
+	private boolean checkForError() throws IOException {
+		boolean error = false;
+
+		try (BufferedReader in = referee.getError()) {
+			if (in.ready()) {
+				error = true;
+				LOG.error("Error during game " + game);
+
+				StringBuilder sb = new StringBuilder();
+				while (in.ready()) {
+					sb.append(in.readLine()).append("\n");
+				}
+
+				LOG.error(sb);
+			}
+		}
+
+		return error;
+	}
+
 	private void destroyAll() {
-        try {
-            if (referee != null) {
-                referee.destroy();
-            }
-        } catch (Exception exception) {
-            LOG.error("Unable to destroy all");
-        }
-
-        if (logsWriter != null) {
-            logsWriter.close();
-            logsWriter = null;
-        }
-    }
+		try {
+			if (referee != null) {
+				referee.destroy();
+			}
+		} catch (Exception exception) {
+			LOG.error("Unable to destroy all");
+		}
+	}
 }
