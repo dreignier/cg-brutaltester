@@ -2,8 +2,7 @@ package com.magusgeek.brutaltester;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,9 +18,8 @@ public class GameThread extends Thread {
 	private BrutalProcess referee;
 	private Path logs;
 	private PrintStream logsWriter;
-
-	private ProcessBuilder builder;
 	private int game;
+	private String command[];
 
 	public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats stats, int n, Path logs) {
 		super("GameThread " + id);
@@ -30,14 +28,16 @@ public class GameThread extends Thread {
 		this.n = n;
 		this.logs = logs;
 		
-		List<String> command = Arrays.asList(refereeCmd.split(" "));
+		command = new String[playersCmd.size() * 2 + (logs != null ? 2 : 0)];
 		
 		for (int i = 0; i < playersCmd.size(); ++i) {
-			command.add("-p" + (i + 1));
-			command.add(playersCmd.get(i));
+		    command[i*2] = "-p" + (i + 1);
+		    command[i*2 + 1] = playersCmd.get(i);
 		}
 		
-		builder = new ProcessBuilder(command);
+		if (logs != null) {
+		  command[playersCmd.size() * 2 + 2] = "-l";
+		}
 	}
 
 	public void log(String message) {
@@ -64,6 +64,42 @@ public class GameThread extends Thread {
                 // End of this thread
                 Main.finish();
                 break;
+            }
+            
+            try {
+              if (logs != null) {
+                command[command.length - 1] = new StringBuilder(logs.toString()).append("/game").append(game).append(".json").toString();
+              }
+              
+              referee = new BrutalProcess(Runtime.getRuntime().exec(command));
+              
+              boolean error = false;
+              StringBuilder data = new StringBuilder();
+              
+              try (Scanner in = referee.getIn()) {
+                
+              }
+              
+              try (Scanner in = new Scanner(referee.getError())) {
+                if (in.hasNext()) {
+                  error = true;
+                  LOG.error("Error during game " + game);
+                  
+                  while (in.hasNext()) {
+                    LOG.error(in.nextLine());
+                  }
+                }
+              }
+              
+              if (error) {
+                LOG.error("If you want to replay this game, use the following command line:");
+                LOG.error(String.join(" ", command) + "-d " + data);
+              }
+              
+            } catch (Exception exception) {
+                LOG.error("Exception in game " + game, exception);
+            } finally {
+                destroyAll();
             }
 
 //            try {
