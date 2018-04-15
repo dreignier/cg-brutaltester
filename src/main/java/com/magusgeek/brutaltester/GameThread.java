@@ -47,8 +47,7 @@ public class GameThread extends Thread {
 		}
 		
 		if (logs != null) {
-			command[playersCount * 2 + 2] = "-l";
-			command[splitted.length + playersCount * 2] = "-l";
+			command[command.length - 2] = "-l";
 		}
 	}
 
