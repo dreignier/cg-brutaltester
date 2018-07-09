@@ -80,19 +80,41 @@ public class GameThread extends Thread {
 
 				int[] scores = new int[playersCount];
 
+				StringBuilder fullOut = new StringBuilder();
 				try (Scanner in = referee.getIn()) {
 					for (int i = 0; i < playersCount; ++i) {
-						scores[i] = in.nextInt();
+						if (in.hasNextInt())
+						{
+							scores[i] = in.nextInt();
+						}
+						else
+						{
+							while(!in.hasNextInt() && in.hasNext())
+							{
+								fullOut.append(in.nextLine()).append("\n");
+							}
+
+							// Try again after referee messages are out of the way
+							if (in.hasNextInt())
+							{
+								scores[i] = in.nextInt();
+							}
+						}
 
 						if (scores[i] < 0) {
 							error = true;
-							LOG.error("Negative score during game " + game);
+							LOG.error("Negative score during game " + game + " p" + i + ":" + scores[i]);
 						}
 					}
 
 					while (in.hasNextLine()) {
 						data.append(in.nextLine()).append("\n");
 					}
+				}
+
+				if (fullOut.length()>0)
+				{
+					LOG.error("Problem with referee output in game" + game + ". Output content:" + fullOut);
 				}
 
 				if (checkForError()) {
