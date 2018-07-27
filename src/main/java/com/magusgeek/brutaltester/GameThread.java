@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.magusgeek.brutaltester.util.Mutable;
+import com.magusgeek.brutaltester.util.SeedGenerator;
 
 public class GameThread extends Thread {
 	private static final Log LOG = LogFactory.getLog(GameThread.class);
@@ -25,6 +26,7 @@ public class GameThread extends Thread {
 	private StringBuilder data = new StringBuilder();
 	private boolean swap;
 	private int pArgIdx[];
+	private int refereeInputIdx;
 
 	public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats stats,
 			int n, Path logs, boolean swap) {
@@ -39,7 +41,7 @@ public class GameThread extends Thread {
 
 		String[] splitted = refereeCmd.split(" ");
 
-		command = new String[splitted.length + playersCount * 2 + (logs != null ? 2 : 0)];
+		command = new String[splitted.length + playersCount * 2 + (logs != null ? 2 : 0) + (swap ? 2 : 0)];
 
 		for (int i = 0; i < splitted.length; ++i) {
 			command[i] = splitted[i];
@@ -51,6 +53,13 @@ public class GameThread extends Thread {
 			command[splitted.length + i * 2 + 1] = playersCmd.get(i);
 		}
 		
+		if (swap) {
+			this.n *= playersCount;
+			refereeInputIdx = splitted.length + playersCount * 2 + 1;
+			command[refereeInputIdx -1] = "-d";
+			command[refereeInputIdx] = "";
+		}
+
 		if (logs != null) {
 			command[command.length - 2] = "-l";
 		}
@@ -76,6 +85,10 @@ public class GameThread extends Thread {
 				if (logs != null) {
 					command[command.length - 1] = new StringBuilder(logs.toString()).append("/game").append(game)
 							.append(".json").toString();
+				}
+
+				if (swap) {
+					command[refereeInputIdx] = "seed=" + SeedGenerator.getSeed(playersCount)[0];
 				}
 
 				referee = new BrutalProcess(Runtime.getRuntime().exec(command));
