@@ -109,7 +109,7 @@ public class Main {
             	if (cmd.hasOption("o")) {
             		new OldGameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs, swap).start();
             	} else {
-            		new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs).start();
+            		new GameThread(i + 1, refereeCmd, playersCmd, count, playerStats, n, logs, swap).start();
             	}
             }
         } catch (Exception exception) {

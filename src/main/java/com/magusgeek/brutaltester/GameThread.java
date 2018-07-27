@@ -23,15 +23,19 @@ public class GameThread extends Thread {
 	private String command[];
 	private int playersCount;
 	private StringBuilder data = new StringBuilder();
+	private boolean swap;
+	private int pArgIdx[];
 
 	public GameThread(int id, String refereeCmd, List<String> playersCmd, Mutable<Integer> count, PlayerStats stats,
-			int n, Path logs) {
+			int n, Path logs, boolean swap) {
 		super("GameThread-" + id);
 		this.count = count;
 		this.stats = stats;
 		this.n = n;
 		this.logs = logs;
+		this.swap = swap;
 		this.playersCount = playersCmd.size();
+		this.pArgIdx = new int[playersCount];
 
 		String[] splitted = refereeCmd.split(" ");
 
@@ -42,6 +46,7 @@ public class GameThread extends Thread {
 		}
 
 		for (int i = 0; i < playersCount; ++i) {
+			pArgIdx[i] = splitted.length + i * 2 + 1;
 			command[splitted.length + i * 2] = "-p" + (i + 1);
 			command[splitted.length + i * 2 + 1] = playersCmd.get(i);
 		}
@@ -82,7 +87,8 @@ public class GameThread extends Thread {
 
 				StringBuilder fullOut = new StringBuilder();
 				try (Scanner in = referee.getIn()) {
-					for (int i = 0; i < playersCount; ++i) {
+					for (int pi = 0; pi < playersCount; ++pi) {
+						int i = (pi + ( (game-1) % playersCount ) ) % playersCount;
 						if (in.hasNextInt())
 						{
 							scores[i] = in.nextInt();
@@ -128,6 +134,14 @@ public class GameThread extends Thread {
 				stats.add(scores);
 
 				LOG.info(new StringBuilder().append("End of game ").append(game).append("\t").append(stats));
+
+				if (swap) {
+					String tmp = command[pArgIdx[0]];
+					for (int i = 1; i < playersCount; i ++)
+						command[pArgIdx[i-1]] = command[pArgIdx[i]];
+					command[pArgIdx[playersCount-1]] = tmp;
+				}
+
 			} catch (Exception exception) {
 				LOG.error("Exception in game " + game, exception);
 				logHelp();
