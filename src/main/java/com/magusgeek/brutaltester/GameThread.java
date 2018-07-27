@@ -38,10 +38,11 @@ public class GameThread extends Thread {
 		this.swap = swap;
 		this.playersCount = playersCmd.size();
 		this.pArgIdx = new int[playersCount];
+		boolean haveSeedArgs = swap || SeedGenerator.repeteableTests;
 
 		String[] splitted = refereeCmd.split(" ");
 
-		command = new String[splitted.length + playersCount * 2 + (logs != null ? 2 : 0) + (swap ? 2 : 0)];
+		command = new String[splitted.length + playersCount * 2 + (logs != null ? 2 : 0) + (haveSeedArgs ? 2 : 0)];
 
 		for (int i = 0; i < splitted.length; ++i) {
 			command[i] = splitted[i];
@@ -53,7 +54,7 @@ public class GameThread extends Thread {
 			command[splitted.length + i * 2 + 1] = playersCmd.get(i);
 		}
 		
-		if (swap) {
+		if (haveSeedArgs) {
 			this.n *= playersCount;
 			refereeInputIdx = splitted.length + playersCount * 2 + 1;
 			command[refereeInputIdx -1] = "-d";
@@ -89,6 +90,8 @@ public class GameThread extends Thread {
 
 				if (swap) {
 					command[refereeInputIdx] = "seed=" + SeedGenerator.getSeed(playersCount)[0];
+				} else if (SeedGenerator.repeteableTests) {
+					command[refereeInputIdx] = "seed=" + SeedGenerator.nextSeed();
 				}
 
 				referee = new BrutalProcess(Runtime.getRuntime().exec(command));
