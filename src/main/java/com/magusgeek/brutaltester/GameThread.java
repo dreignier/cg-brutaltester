@@ -23,6 +23,7 @@ public class GameThread extends Thread {
 	private int game;
 	private String command[];
 	private int playersCount;
+	private List<String> playersCmd;
 	private StringBuilder data = new StringBuilder();
 	private boolean swap;
 	private int pArgIdx[];
@@ -37,6 +38,7 @@ public class GameThread extends Thread {
 		this.logs = logs;
 		this.swap = swap;
 		this.playersCount = playersCmd.size();
+		this.playersCmd = playersCmd;
 		this.pArgIdx = new int[playersCount];
 		boolean haveSeedArgs = swap || SeedGenerator.repeteableTests;
 
@@ -88,8 +90,12 @@ public class GameThread extends Thread {
 							.append(".json").toString();
 				}
 
+				int seedRotate[] = SeedGenerator.getSeed(playersCount);
 				if (swap) {
-					command[refereeInputIdx] = "seed=" + SeedGenerator.getSeed(playersCount)[0];
+					command[refereeInputIdx] = "seed=" + seedRotate[0];
+					for (int i = 0; i < playersCount; i ++) {
+						command[pArgIdx[i]] = playersCmd.get((i + seedRotate[1]) % playersCount);
+					}
 				} else if (SeedGenerator.repeteableTests) {
 					command[refereeInputIdx] = "seed=" + SeedGenerator.nextSeed();
 				}
@@ -104,7 +110,7 @@ public class GameThread extends Thread {
 				StringBuilder fullOut = new StringBuilder();
 				try (Scanner in = referee.getIn()) {
 					for (int pi = 0; pi < playersCount; ++pi) {
-						int i = (pi + ( (game-1) % playersCount ) ) % playersCount;
+						int i = (pi + seedRotate[1]) % playersCount;
 						if (in.hasNextInt())
 						{
 							scores[i] = in.nextInt();
@@ -150,13 +156,6 @@ public class GameThread extends Thread {
 				stats.add(scores);
 
 				LOG.info(new StringBuilder().append("End of game ").append(game).append("\t").append(stats));
-
-				if (swap) {
-					String tmp = command[pArgIdx[0]];
-					for (int i = 1; i < playersCount; i ++)
-						command[pArgIdx[i-1]] = command[pArgIdx[i]];
-					command[pArgIdx[playersCount-1]] = tmp;
-				}
 
 			} catch (Exception exception) {
 				LOG.error("Exception in game " + game, exception);
