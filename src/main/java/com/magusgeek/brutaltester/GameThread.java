@@ -110,7 +110,7 @@ public class GameThread extends Thread {
 				StringBuilder fullOut = new StringBuilder();
 				try (Scanner in = referee.getIn()) {
 					for (int pi = 0; pi < playersCount; ++pi) {
-						int i = (pi + seedRotate[1]) % playersCount;
+						int i = swap ? (pi + seedRotate[1]) % playersCount : pi;
 						if (in.hasNextInt())
 						{
 							scores[i] = in.nextInt();
