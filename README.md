@@ -119,6 +119,8 @@ This is not an official roadmap at all.
 
 If you have a bug or a problem with one of these referees, create an issue of the github project of the referee, not on cg-brutaltester project. This may not be a full list of available referees for cg-brutaltester. If you want to add a referee to this list, just make a pull request.
 
+ * Spring challenge 2020:
+   * https://github.com/Akarachudra/brutaltester-spring-challenge-2020 (Java)
  * Unleash The Geek:
    * https://github.com/fala13/UnleashTheGeek (Java)
  * Legends Of Code And Magic:
