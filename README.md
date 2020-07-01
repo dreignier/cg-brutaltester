@@ -1,6 +1,6 @@
 # cg-brutaltester
 
-cg-brutaltester is a Java local tool to simulate the [CodinGame](https://www.codingame.com/) multiplayer IDE. How does it work? Very simple:
+cg-brutaltester is a Java local tool to simulate the [CodinGame](https://www.codingame.com/) multiplayer arena. How does it work? Very simple:
 
     java -jar cg-brutaltester.jar -r "java -jar cg-referee-ghost-in-the-cell.jar" -p1 "./myCode.exe" -p2 "php myCode.php" -t 2 -n 100 -l "./logs/"
 
