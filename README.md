@@ -131,6 +131,8 @@ If you have a bug or a problem with one of these referees, create an issue of th
    * https://github.com/fala13/code-of-kutulu (Java)
  * Ultimate Tic Tac Toe
    * https://github.com/dreignier/game-ultimate-tictactoe (Java)
+ * Botters of the Galaxy:
+   * https://github.com/Illedan/BOTG-Refree (Java) 
  * Ghost in the cell:
    * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java) (use it with `-o`)
  * Coders of the Caribbean:
