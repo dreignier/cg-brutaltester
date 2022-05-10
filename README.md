@@ -139,13 +139,13 @@ If you have a bug or a problem with one of these referees, create an issue of th
    * https://github.com/dreignier/cg-referee-ghost-in-the-cell (Java) (use it with `-o`)
  * Coders of the Caribbean:
    * https://github.com/Coac/brutaltester-referee-coders-of-the-caribbean (Java) (use it with `-o`)
-   * https://github.com/KevinBusse/cg-referee-coders-of-the-caribbean (Java) (use it with `-o`)
+   * https://github.com/kevinsandow/cg-referee-coders-of-the-caribbean (Java) (use it with `-o`)
  * Code 4 life:
-   * https://github.com/KevinBusse/cg-referee-code4life (Java) (use it with `-o`)
+   * https://github.com/kevinsandow/cg-referee-code4life (Java) (use it with `-o`)
  * Wondev Woman:
-   * https://github.com/KevinBusse/cg-referee-wondev-woman (Java) (use it with `-o`)
+   * https://github.com/kevinsandow/cg-referee-wondev-woman (Java) (use it with `-o`)
  * Mean Max:
-   * https://github.com/KevinBusse/cg-referee-mean-max (Java) (use it with `-o`)
+   * https://github.com/kevinsandow/cg-referee-mean-max (Java) (use it with `-o`)
  * Coders strike back:
    * https://github.com/robostac/coders-strike-back-referee (Go) (use it with `-o`)
  * Back to the Code:
