@@ -119,6 +119,9 @@ This is not an official roadmap at all.
 
 If you have a bug or a problem with one of these referees, create an issue of the github project of the referee, not on cg-brutaltester project. This may not be a full list of available referees for cg-brutaltester. If you want to add a referee to this list, just make a pull request.
 
+
+ * Fall challenge 2022:
+   * https://github.com/bastien-35/FallChallenge2022-KeepOffTheGrass
  * Spring challenge 2022:
    * https://github.com/johnpage-agixis/SpringChallenge2022
  * Spring challenge 2021:
